@@ -9,10 +9,8 @@ int main()
         double X, Y;
 
         // Vnos koordinat
-        printf("Vnesi X koordinato: ");
-        scanf("%lf", &X);
-        printf("Vnesi Y koordinato: ");
-        scanf("%lf", &Y);
+        printf("Vnesi X in Y: ");
+        scanf("%lf %lf", &X, &Y);
 
         // Preveri, če je točka v izhodišču
         if (X == 0 && Y == 0)
