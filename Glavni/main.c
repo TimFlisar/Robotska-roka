@@ -61,36 +61,49 @@ void sendData(const char *portname, const char *message)
 
     CloseHandle(hSerial);
 }
-double XYtoDAG(const int x, const int y)
+double toDAG(const int x, const int y)
 {
     // Izračun kota v radianih
     double kot_rad = atan2(y, x);
 
-    // Pretvori v stopinje
-    double kot_stopinje = kot_rad * 180 / M_PI;
+    // Pretvori v DEG
+    double kot_DEG = kot_rad * 180 / M_PI;
 
     // Zagotovi, da je kot pozitiven
-    if (kot_stopinje < 0)
+    if (kot_DEG < 0)
     {
-        kot_stopinje += 360;
+        kot_DEG += 360;
     }
-    return kot_stopinje;
+    return kot_DEG;
+}
+double toHipt(const int x, const int y)
+{
+    return sqrt(x * x + y * y);
 }
 
 int main()
 {
-    double X, Y;
+    while (1)
+    {
+        const double Zos0 = 220;
+        double X, Y;
 
-    // Vnos koordinat
-    printf("Vnesi X in Y: ");
-    scanf("%lf %lf", &X, &Y);
+        // Vnos koordinat
+        printf("Vnesi X in Y: ");
+        scanf("%lf %lf", &X, &Y);
 
-    double stopinje = XYtoDAG(X, Y);
+        // Izračun hipotenuze na pliskvi (Z0)
+        double oddaljenostXYH = toHipt(X, Y);
 
-    printf("\n%.2lf\n-----------------------------------------------\n", stopinje);
+        double os0DEG = toDAG(X, Y);
+        double os1DEG = toDAG(Zos0, oddaljenostXYH);
 
-    char message[256];
-    sprintf(message, "%f", stopinje);
-    sendData("COM5", message);
-    return 0;
+        printf("\nos0: %lf\nos1: %lf", os0DEG, os1DEG);
+
+        char message[256];
+        sprintf(message, "0:%lf,1:%lf", os0DEG, os1DEG);
+        sendData("COM5", message);
+        printf("\n-----------------------------------------------\n");
+    }
+    // return 0;
 }
